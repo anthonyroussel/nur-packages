@@ -14,6 +14,8 @@
   modules = import ./modules; # NixOS modules
   overlays = import ./overlays; # nixpkgs overlays
 
+  aws-cdk-local = pkgs.callPackage ./pkgs/aws-cdk-local { };
+
   awscli-local = pkgs.callPackage ./pkgs/awscli-local { };
 
 }
