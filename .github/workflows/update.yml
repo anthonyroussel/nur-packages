@@ -1,0 +1,29 @@
+name: "Update"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 7 * * *"
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install nix
+        uses: cachix/install-nix-action@v18
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Allow build of Nix Unfree packages"
+        run: |
+          mkdir -p ~/.config/nixpkgs/
+          echo "{ allowUnfree = true; }" > ~/.config/nixpkgs/config.nix
+
+      - name: Build nix packages
+        run: |
+          nix-shell maintainers/scripts/update.nix --argstr maintainer anthonyroussel
