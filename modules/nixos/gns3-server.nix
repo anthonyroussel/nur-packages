@@ -6,6 +6,11 @@ let
   settingsFormat = pkgs.formats.ini { };
   configFile = settingsFormat.generate "gns3-server.conf" cfg.settings;
 
+  flags = {
+    enableDocker = config.virtualisation.docker.enable;
+    enableLibvirtd = config.virtualisation.libvirtd.enable;
+  };
+
 in {
   meta.maintainers = [ lib.maintainers.anthonyroussel ];
 
@@ -120,9 +125,6 @@ in {
         enable = lib.mkEnableOption (lib.mdDoc ''Whether to enable VPCS support.'');
         package = lib.mkPackageOptionMD pkgs "vpcs" {};
       };
-
-      docker.enable = lib.mkEnableOption (lib.mdDoc ''Whether to enable Docker support.'');
-      libvirtd.enable = lib.mkEnableOption (lib.mdDoc ''Whether to enable libvirtd support.'');
     };
   };
 
@@ -143,18 +145,14 @@ in {
       source = "${cfg.ubridge.package}/bin/ubridge";
     };
 
-    # Docker support requires the Docker daemon to be running.
-    virtualisation.docker.enable = lib.mkIf cfg.docker.enable true;
-    virtualisation.libvirtd.enable = lib.mkIf cfg.libvirtd.enable true;
-
     users.users.gns3 = {
       name = "gns3";
       group = "gns3";
       description = "GNS3 user";
       isSystemUser = true;
       home = "/var/lib/gns3";
-      extraGroups = lib.optional cfg.docker.enable "docker"
-        ++ lib.optional cfg.libvirtd.enable "libvirtd"
+      extraGroups = lib.optional flags.enableDocker "docker"
+        ++ lib.optional flags.enableLibvirtd "libvirtd"
         ++ lib.optional cfg.ubridge.enable "ubridge";
     };
 
@@ -214,7 +212,7 @@ in {
         ''}
       '';
 
-      path = lib.optional (cfg.libvirtd.enable) pkgs.qemu;
+      path = lib.optional (flags.enableLibvirtd) pkgs.qemu;
 
       reloadTriggers = [ configFile ];
 
@@ -237,7 +235,7 @@ in {
         WorkingDirectory = "/var/lib/gns3";
 
         # Hardening
-        DeviceAllow = lib.optional (cfg.libvirtd.enable) "/dev/kvm";
+        DeviceAllow = lib.optional (flags.enableLibvirtd) "/dev/kvm";
         DevicePolicy = "closed";
         LockPersonality = true;
         MemoryDenyWriteExecute = true;
