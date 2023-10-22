@@ -135,10 +135,7 @@ in {
       }
     ];
 
-    environment.systemPackages = [ cfg.package ]
-      ++ lib.optional cfg.dynamips.enable cfg.dynamips.package
-      ++ lib.optional cfg.ubridge.enable cfg.ubridge.package
-      ++ lib.optional cfg.vpcs.enable cfg.vpcs.package;
+    environment.systemPackages = [ cfg.package ];
 
     users.groups.ubridge = lib.mkIf cfg.ubridge.enable { };
 
@@ -217,7 +214,7 @@ in {
           ${pkgs.replace-secret}/bin/replace-secret \
             '@AUTH_PASSWORD@' \
             ${cfg.auth.passwordFile} \
-            ${configFile}
+            /run/gns3/gns3_server.conf
         ''}
       '';
 
