@@ -80,6 +80,7 @@ in {
       tls = {
         enable = lib.mkEnableOption (lib.mdDoc "TLS encryption");
 
+        # nullable check
         certFile = lib.mkOption {
           type = lib.types.nullOr lib.types.path;
           default = null;
@@ -90,6 +91,7 @@ in {
           '';
         };
 
+        # nullable check
         keyFile = lib.mkOption {
           type = lib.types.nullOr lib.types.path;
           default = null;
@@ -224,7 +226,8 @@ in {
 
       serviceConfig = {
         ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
-        ExecStart = "${lib.getExe cfg.package} ${commandArgs}";
+        # FIXME
+        ExecStart = "${cfg.package}/bin/gns3server ${commandArgs}";
         Group = "gns3";
         LimitNOFILE = 16384;
         LogsDirectory = "gns3";
