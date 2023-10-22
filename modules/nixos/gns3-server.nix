@@ -77,8 +77,8 @@ in {
         debug = lib.mkEnableOption (lib.mdDoc "debug logging");
       };
 
-      tls = {
-        enable = lib.mkEnableOption (lib.mdDoc "TLS encryption");
+      ssl = {
+        enable = lib.mkEnableOption (lib.mdDoc "SSL encryption");
 
         # nullable check
         certFile = lib.mkOption {
@@ -86,7 +86,7 @@ in {
           default = null;
           example = "/secrets/gns3.crt";
           description = lib.mdDoc ''
-            Path to the TLS certificate file. This certificate will
+            Path to the SSL certificate file. This certificate will
             be offered to, and may be verified by, clients.
           '';
         };
@@ -120,12 +120,12 @@ in {
   config = lib.mkIf cfg.enable {
     assertions = [
       {
-        assertion = cfg.tls.enable -> cfg.tls.certFile != null;
-        message = "Please provide a certificate to use for TLS encryption.";
+        assertion = cfg.ssl.enable -> cfg.ssl.certFile != null;
+        message = "Please provide a certificate to use for SSL encryption.";
       }
       {
-        assertion = cfg.tls.enable -> cfg.tls.keyFile != null;
-        message = "Please provide a private key to use for TLS encryption.";
+        assertion = cfg.ssl.enable -> cfg.ssl.keyFile != null;
+        message = "Please provide a private key to use for SSL encryption.";
       }
       {
         assertion = cfg.auth.enable -> cfg.auth.user != null;
@@ -196,10 +196,10 @@ in {
         config = "/run/gns3/gns3_server.conf";
         pid = "/run/gns3/server.pid";
         log = cfg.log.file;
-        tls = cfg.tls.enable;
+        ssl = cfg.ssl.enable;
         # These are implicitly not set if `null`
-        certfile = cfg.tls.certFile;
-        certkey = cfg.tls.keyFile;
+        certfile = cfg.ssl.certFile;
+        certkey = cfg.ssl.keyFile;
       };
     in
     {
@@ -210,7 +210,7 @@ in {
       wants = [ "network-online.target" ];
 
       preStart = ''
-        install -m660 ${configFile} /run/gns3/gns3_server.conf
+        install -m660 ${configFile} -o gns3 -g gns3 /run/gns3/gns3_server.conf
 
         ${lib.optionalString (cfg.auth.passwordFile != null) ''
           ${pkgs.replace-secret}/bin/replace-secret \
