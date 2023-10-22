@@ -210,7 +210,7 @@ in {
       wants = [ "network-online.target" ];
 
       preStart = ''
-        install -m 660 -o gns3 -g gns3 ${configFile} /run/gns3/gns3_server.conf
+        install -m660 ${configFile} /run/gns3/gns3_server.conf
 
         ${lib.optionalString (cfg.auth.passwordFile != null) ''
           ${pkgs.replace-secret}/bin/replace-secret \
