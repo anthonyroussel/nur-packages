@@ -218,7 +218,7 @@ in {
 
       serviceConfig = {
         ConfigurationDirectory = "gns3";
-        StateDirectoryMode = "0750";
+        ConfigurationDirectoryMode = "0750";
         ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
         ExecStart = "${cfg.package}/bin/gns3server ${commandArgs}";
         Group = "gns3";
