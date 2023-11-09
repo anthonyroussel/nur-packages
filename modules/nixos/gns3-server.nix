@@ -199,7 +199,7 @@ in {
         ''}
       '';
 
-      path = lib.optional config.virtualisation.libvirtd.enable pkgs.qemu;
+      path = lib.optional flags.enableLibvirtd pkgs.qemu;
 
       reloadTriggers = [ configFile ];
 
@@ -220,8 +220,8 @@ in {
         RuntimeDirectory = "gns3";
         StateDirectory = "gns3";
         StateDirectoryMode = "0750";
-        SupplementaryGroups = lib.optional config.virtualisation.docker.enable "docker"
-          ++ lib.optional config.virtualisation.libvirtd.enable "libvirtd"
+        SupplementaryGroups = lib.optional flags.enableDocker "docker"
+          ++ lib.optional flags.enableLibvirtd "libvirtd"
           ++ lib.optional cfg.ubridge.enable "ubridge";
         User = "gns3";
         WorkingDirectory = "/var/lib/gns3";
