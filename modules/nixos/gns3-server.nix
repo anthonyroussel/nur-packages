@@ -139,19 +139,6 @@ in {
       source = lib.getExe cfg.ubridge.package;
     };
 
-    users.users.gns3 = {
-      name = "gns3";
-      group = "gns3";
-      description = "GNS3 user";
-      isSystemUser = true;
-      home = "/var/lib/gns3";
-      extraGroups = lib.optional flags.enableDocker "docker"
-        ++ lib.optional flags.enableLibvirtd "libvirtd"
-        ++ lib.optional cfg.ubridge.enable "ubridge";
-    };
-
-    users.groups.gns3 = { };
-
     services.gns3-server.settings = lib.mkMerge [
       {
         Server = {
@@ -212,7 +199,7 @@ in {
         ''}
       '';
 
-      path = lib.optional flags.enableLibvirtd pkgs.qemu;
+      path = lib.optional config.virtualisation.libvirtd.enable pkgs.qemu;
 
       reloadTriggers = [ configFile ];
 
@@ -233,6 +220,9 @@ in {
         RuntimeDirectory = "gns3";
         StateDirectory = "gns3";
         StateDirectoryMode = "0750";
+        SupplementaryGroups = lib.optional config.virtualisation.docker.enable "docker"
+          ++ lib.optional config.virtualisation.libvirtd.enable "libvirtd"
+          ++ lib.optional cfg.ubridge.enable "ubridge";
         User = "gns3";
         WorkingDirectory = "/var/lib/gns3";
 
