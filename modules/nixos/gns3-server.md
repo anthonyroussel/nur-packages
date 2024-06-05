@@ -1,14 +1,14 @@
-# GNS3 Server {#module-services-gns3-server}
+# GNS3 Server {#module-anthonyrsl-services-gns3-server}
 
 [GNS3](https://www.gns3.com/), a network software emulator.
 
-## Basic Usage {#module-services-gns3-server-basic-usage}
+## Basic Usage {#module-anthonyrsl-services-gns3-server-basic-usage}
 
 A minimal configuration looks like this:
 
 ```nix
 {
-  services.gns3-server = {
+  anthonyrsl.services.gns3-server = {
     enable = true;
 
     auth = {

@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  cfg = config.services.gns3-server;
+  cfg = config.anthonyrsl.services.gns3-server;
 
   settingsFormat = pkgs.formats.ini { };
   configFile = settingsFormat.generate "gns3-server.conf" cfg.settings;
@@ -13,7 +13,7 @@ in {
   };
 
   options = {
-    services.gns3-server = {
+    anthonyrsl.services.gns3-server = {
       enable = lib.mkEnableOption (lib.mdDoc "GNS3 Server daemon");
 
       package = lib.mkPackageOptionMD pkgs "gns3-server" { };
@@ -108,7 +108,6 @@ in {
       enableDocker = config.virtualisation.docker.enable;
       enableLibvirtd = config.virtualisation.libvirtd.enable;
     };
-
   in lib.mkIf cfg.enable {
     assertions = [
       {
@@ -146,7 +145,7 @@ in {
       source = lib.getExe cfg.ubridge.package;
     };
 
-    services.gns3-server.settings = lib.mkMerge [
+    anthonyrsl.services.gns3-server.settings = lib.mkMerge [
       {
         Server = {
           appliances_path = lib.mkDefault "/var/lib/gns3/appliances";
@@ -210,6 +209,8 @@ in {
 
       reloadTriggers = [ configFile ];
 
+      # SystemD sandboxing does not work with GNS3.
+      # GNS3 needs to run SUID binaries (ubridge), but NoNewPrivileges breaks execution of SUID binaries
       serviceConfig = {
         ConfigurationDirectory = "gns3";
         ConfigurationDirectoryMode = "0750";
@@ -232,6 +233,39 @@ in {
           ++ lib.optional cfg.ubridge.enable "ubridge";
         User = "gns3";
         WorkingDirectory = "%S/gns3";
+
+        DynamicUser = pkgs.lib.mkForce false;
+        NoNewPrivileges = pkgs.lib.mkForce false;
+        RestrictSUIDSGID = pkgs.lib.mkForce false;
+        PrivateUsers = pkgs.lib.mkForce false;
+
+        # Hardening
+        DeviceAllow = lib.optional flags.enableLibvirtd "/dev/kvm";
+        DevicePolicy = "closed";
+        LockPersonality = true;
+        MemoryDenyWriteExecute = true;
+        PrivateTmp = true;
+        # Don't restrict ProcSubset because python3Packages.psutil requires read access to /proc/stat
+        # ProcSubset = "pid";
+        ProtectClock = true;
+        ProtectControlGroups = true;
+        ProtectHome = true;
+        ProtectHostname = true;
+        ProtectKernelLogs = true;
+        ProtectKernelModules = true;
+        ProtectKernelTunables = true;
+        ProtectProc = "invisible";
+        ProtectSystem = "strict";
+        RestrictAddressFamilies = [
+          "AF_INET"
+          "AF_INET6"
+          "AF_NETLINK"
+          "AF_UNIX"
+          "AF_PACKET"
+        ];
+        RestrictNamespaces = true;
+        RestrictRealtime = true;
+        UMask = "0077";
       };
     };
   };
