@@ -240,7 +240,12 @@ in {
         PrivateUsers = pkgs.lib.mkForce false;
 
         # Hardening
-        DeviceAllow = lib.optional flags.enableLibvirtd "/dev/kvm";
+        DeviceAllow = [
+          "/dev/net/tun rw"
+          "/dev/net/tap rw"
+        ] ++ lib.optionals flags.enableLibvirtd [
+          "/dev/kvm"
+        ];
         DevicePolicy = "closed";
         LockPersonality = true;
         MemoryDenyWriteExecute = true;
@@ -265,7 +270,7 @@ in {
         ];
         RestrictNamespaces = true;
         RestrictRealtime = true;
-        UMask = "0077";
+        UMask = "0022";
       };
     };
   };
