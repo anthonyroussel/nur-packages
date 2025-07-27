@@ -1,9 +1,13 @@
-{ callPackage, pkgs }:
-
 {
-  aws-cdk-local = callPackage ./aws-cdk-local { };
+  lib,
+  callPackage,
+  pkgs,
+}:
 
-  awscli-local = callPackage ./awscli-local { };
+lib.filesystem.packagesFromDirectoryRecursive {
+  inherit callPackage;
+  directory = ./.;
+} // {
 
   shadow-prod = callPackage ./shadow-client {
     channel = "prod";
@@ -22,6 +26,4 @@
     enableDiagnostics = true;
     enableDesktopLauncher = true;
   };
-
-  terraform-local = callPackage ./terraform-local { };
 }
