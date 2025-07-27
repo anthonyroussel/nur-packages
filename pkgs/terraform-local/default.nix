@@ -1,30 +1,46 @@
-{ lib
-, python3
-, fetchPypi
-, terraform
+{
+  lib,
+  fetchPypi,
+  python3Packages,
+  terraform,
 }:
 
-python3.pkgs.buildPythonApplication rec {
+python3Packages.buildPythonApplication rec {
   pname = "terraform-local";
-  version = "0.6";
+  version = "0.24.1";
+  pyproject = true;
 
   src = fetchPypi {
-    inherit pname version;
-    hash = "sha256-1FaYAXLuxu3tQkm/BIccCql/boSV5g7LwlT//h4wT4k=";
+    pname = "terraform_local";
+    inherit version;
+    hash = "sha256-LPrrKDoXUwg/P1m+Gi4I0iUoaRNjNpTWlbBLupkTrpE=";
   };
 
-  propagatedBuildInputs = [
-    python3.pkgs.localstack-client
-    terraform
+  build-system = with python3Packages; [
+    setuptools
   ];
 
-  checkPhase = ''
+  dependencies =
+    with python3Packages;
+    [
+      localstack-client
+      python-hcl2
+    ]
+    ++ [ terraform ];
+
+  nativeCheckInputs = with python3Packages; [
+    pytestCheckHook
+  ];
+
+  installCheckPhase = ''
+    runHook preInstallCheck
     $out/bin/tflocal -version
+    runHook postInstallCheck
   '';
 
   meta = with lib; {
     description = "Small wrapper script to run Terraform against LocalStack";
-    license = licenses.apsl20;
+    license = licenses.asl20;
     maintainers = with maintainers; [ anthonyroussel ];
     homepage = "https://github.com/localstack/terraform-local";
   };
