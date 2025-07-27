@@ -1,28 +1,36 @@
-{ pkgs, stdenv, lib, makeWrapper }:
+{
+  pkgs,
+  stdenv,
+  lib,
+  makeWrapper,
+  buildNpmPackage,
+  fetchFromGitHub,
+}:
 
-let
-  myNodePackages = import ./node-composition.nix {
-    inherit pkgs;
-    inherit (stdenv.hostPlatform) system;
+buildNpmPackage {
+  pname = "aws-cdk-local";
+  version = "0-unstable-2025-04-22";
+
+  src = fetchFromGitHub {
+    owner = "localstack";
+    repo = "aws-cdk-local";
+    rev = "9bb17186e0201a93d84edd0e8478f7da69ae5414";
+    hash = "sha256-1cgcBXe2N8sSNWe2L0QO8/MiBpAWKGz5DBxtl5s3+Lw=";
   };
 
-in myNodePackages.aws-cdk-local.override {
-  nativeBuildInputs = [ makeWrapper ];
+  npmDepsHash = "sha256-pEjsZKGiXYhavaxkBNXXzhF4GxFqJo1IZ/jIo1wSgIs=";
 
-  postInstall = ''
-    wrapProgram "$out/bin/cdklocal" \
-      --prefix NODE_PATH : ${pkgs.nodePackages.aws-cdk}/lib/node_modules
-  '';
+  dontNpmBuild = true;
 
-  passthru = {
-    updateScript = ./update.sh;
-  };
+  makeWrapperArgs = [
+    "--prefix NODE_PATH : ${pkgs.nodePackages.aws-cdk}/lib/node_modules"
+  ];
 
-  meta = with lib; {
+  meta = {
     description = "CDK Toolkit for use with LocalStack";
-    license = licenses.asl20;
+    license = lib.licenses.asl20;
     homepage = "https://github.com/localstack/aws-cdk-local";
-    maintainers = with maintainers; [ anthonyroussel ];
-    platforms = platforms.unix;
+    maintainers = [ lib.maintainers.anthonyroussel ];
+    platforms = lib.platforms.unix;
   };
 }
