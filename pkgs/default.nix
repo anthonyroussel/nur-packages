@@ -5,10 +5,6 @@
 
   awscli-local = callPackage ./awscli-local { };
 
-  python-barbicanclient = pkgs.python3Packages.callPackage ./python-barbicanclient { };
-
-  python-designateclient = pkgs.python3Packages.callPackage ./python-designateclient { };
-
   shadow-prod = callPackage ./shadow-client {
     channel = "prod";
     enableDiagnostics = true;
