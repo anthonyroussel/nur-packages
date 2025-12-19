@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v5.0.1
 
       - uses: DeterminateSystems/nix-installer-action@v21
         with:
@@ -32,9 +32,6 @@ jobs:
 
       - name: Update Upstream information file
         run: ./update.py --commit
-
-      - name: Push branch
-        run: git push origin update-shadow-channels -f
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v8.0.0
