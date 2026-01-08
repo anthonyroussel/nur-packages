@@ -28,17 +28,17 @@
     "releaseDate": "2025-12-24T13:05:05.621Z"
   },
   "testing": {
-    "version": "9.9.10346",
+    "version": "9.9.10351",
     "files": [
       {
-        "url": "ShadowPCAlpha-9.9.10346.AppImage",
-        "sha512": "9gpwt1Rvhj95xtKrKZ4cZbGxqqcgLA1mM6JEUGnqs3DowAukZtiI7EdpUm2/EJ2mT70SdpyTRMkAajKrNxKT1Q==",
-        "size": 254253335,
-        "blockMapSize": 264491
+        "url": "ShadowPCAlpha-9.9.10351.AppImage",
+        "sha512": "L7tL8Re0/MX1MzStenUx6PXxW9H+tq3De3I74XamgfHtZARURgTKk4mG4Qh4GeHfvBKlNsOC/28d6+toIhlKnw==",
+        "size": 254253562,
+        "blockMapSize": 264718
       }
     ],
-    "path": "ShadowPCAlpha-9.9.10346.AppImage",
-    "sha512": "9gpwt1Rvhj95xtKrKZ4cZbGxqqcgLA1mM6JEUGnqs3DowAukZtiI7EdpUm2/EJ2mT70SdpyTRMkAajKrNxKT1Q==",
-    "releaseDate": "2025-12-24T13:06:39.886Z"
+    "path": "ShadowPCAlpha-9.9.10351.AppImage",
+    "sha512": "L7tL8Re0/MX1MzStenUx6PXxW9H+tq3De3I74XamgfHtZARURgTKk4mG4Qh4GeHfvBKlNsOC/28d6+toIhlKnw==",
+    "releaseDate": "2026-01-06T10:04:07.106Z"
   }
 }
