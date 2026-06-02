@@ -22,7 +22,7 @@ jobs:
         with:
           github-token: ${{ secrets.GH_TOKEN }}
 
-      - uses: DeterminateSystems/magic-nix-cache-action@v13
+      - uses: DeterminateSystems/magic-nix-cache-action@v14
 
       - name: Configure Git author and create branch
         run: |
